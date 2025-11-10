@@ -1,0 +1,6 @@
+flask
+Flask-Cors
+Flask-Talisman
+pytest
+pytest-cov
+flake8
