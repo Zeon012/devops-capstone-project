@@ -8,5 +8,7 @@ build/
 .pytest_cache/
 .DS_Store
 instance/
+.coverage
 coverage.xml
 htmlcov/
+course-15.code-workspace

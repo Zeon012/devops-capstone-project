@@ -7,7 +7,7 @@ This repository is a scaffold for the Customer Accounts microservice used in the
 ## What this scaffold provides
 
 - A small Flask app with CRUD endpoints for accounts
-- Unit tests using nose and a test harness
+- Unit tests using pytest with 100% code coverage
 - Security configuration (Flask-Talisman + Flask-CORS)
 - A GitHub Actions CI workflow file (runs lint, tests, coverage)
 - Dockerfile and simple Kubernetes manifest templates
