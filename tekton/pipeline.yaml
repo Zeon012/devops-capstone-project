@@ -1,0 +1,92 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: accounts-cd-pipeline
+spec:
+  params:
+    - name: repo-url
+      type: string
+      description: The git repository URL
+      default: https://github.com/Zeon012/devops-capstone-project
+    - name: branch
+      type: string
+      description: The git branch to build from
+      default: master
+    - name: image-name
+      type: string
+      description: The name of the image to build
+      default: accounts
+  workspaces:
+    - name: source
+      description: Workspace for source code
+    - name: dockerconfig
+      description: Docker config for registry authentication
+  tasks:
+    - name: clone
+      taskRef:
+        name: git-clone
+        kind: ClusterTask
+      params:
+        - name: url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.branch)
+      workspaces:
+        - name: output
+          workspace: source
+
+    - name: lint
+      taskRef:
+        name: flake8
+      runAfter:
+        - clone
+      params:
+        - name: args
+          value: ["--max-line-length=120", "--exclude=.venv"]
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: test
+      taskRef:
+        name: pytest
+      runAfter:
+        - lint
+      params:
+        - name: args
+          value: ["tests/", "-v", "--cov=accounts", "--cov-report=term", "--cov-fail-under=95"]
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build
+      taskRef:
+        name: buildah
+        kind: ClusterTask
+      runAfter:
+        - test
+      params:
+        - name: IMAGE
+          value: "$(params.image-name):$(tasks.clone.results.commit)"
+        - name: DOCKERFILE
+          value: ./Dockerfile
+      workspaces:
+        - name: source
+          workspace: source
+        - name: dockerconfig
+          workspace: dockerconfig
+
+    - name: deploy
+      taskRef:
+        name: kubernetes-actions
+        kind: ClusterTask
+      runAfter:
+        - build
+      params:
+        - name: script
+          value: |
+            kubectl set image deployment/accounts accounts=$(params.image-name):$(tasks.clone.results.commit) -n default
+            kubectl rollout status deployment/accounts -n default
+      workspaces:
+        - name: manifest-dir
+          workspace: source

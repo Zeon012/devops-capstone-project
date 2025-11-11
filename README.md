@@ -64,27 +64,78 @@ pytest --cov=accounts --cov-report=term --cov-fail-under=95
 - Security headers are enabled via Flask-Talisman.
 - CORS is configured via Flask-CORS (permissive for development; tighten in production).
 
+## Using the Makefile (Recommended)
+
+The project includes a Makefile for common tasks:
+
+```bash
+make help          # Show all available commands
+make install       # Install dependencies
+make test          # Run tests with coverage
+make lint          # Run flake8 linter
+make run           # Run the Flask app locally
+make docker-build  # Build Docker image
+make docker-run    # Run Docker container
+make deploy-k8s    # Deploy to Kubernetes
+make tekton-install # Install Tekton pipeline
+```
+
 ## Docker & Kubernetes
 
-Build and run the Docker image:
+### Build and run the Docker image
 
-```powershell
-# build image
+```bash
+# Build image
+make docker-build
+# or
 docker build -t accounts:latest .
 
-# run locally
+# Run locally
+make docker-run
+# or
 docker run -p 5000:5000 accounts:latest
 ```
 
-Deploy to Kubernetes/OpenShift:
+### Push to container registry
 
-```powershell
-# deploy postgres
+```bash
+# Set your registry URL and push
+make docker-push REGISTRY=us.icr.io/your-namespace
+```
+
+### Deploy to Kubernetes/OpenShift
+
+```bash
+# Deploy using Makefile
+make deploy-k8s
+
+# Or manually
 kubectl apply -f k8s/postgres.yaml
-
-# update k8s/deployment.yaml with your registry URL, then deploy
 kubectl apply -f k8s/deployment.yaml
 ```
+
+## Tekton CD Pipeline
+
+Automated deployment pipeline included in `tekton/` directory.
+
+See [tekton/README.md](tekton/README.md) for full setup instructions.
+
+Quick start:
+
+```bash
+# Install Tekton tasks and pipeline
+make tekton-install
+
+# Manually trigger a pipeline run
+make tekton-run
+```
+
+## Project Links
+
+- **Repository**: https://github.com/Zeon012/devops-capstone-project
+- **CI/CD Actions**: https://github.com/Zeon012/devops-capstone-project/actions
+- **Issues/Kanban**: https://github.com/Zeon012/devops-capstone-project/issues
+- **Project Board**: https://github.com/users/Zeon012/projects/1
 
 ## License
 
