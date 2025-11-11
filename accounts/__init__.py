@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 from flask_talisman import Talisman
@@ -13,8 +14,12 @@ def create_app(test_config=None):
     # CORS (allow all for scaffold; tighten in production)
     CORS(app)
 
-    # Security headers via Talisman (disable force_https in test mode)
-    force_https = not app.config.get('TESTING', False)
+    # Security headers via Talisman
+    # Allow HTTP in development (FLASK_ENV=development) or testing
+    force_https = not (
+        app.config.get('TESTING', False) or 
+        os.environ.get('FLASK_ENV') == 'development'
+    )
     Talisman(app, content_security_policy=None, force_https=force_https)
 
     # Register blueprints

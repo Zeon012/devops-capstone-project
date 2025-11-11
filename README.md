@@ -15,7 +15,29 @@ This repository is a scaffold for the Customer Accounts microservice used in the
 
 ## How to run locally (Windows PowerShell)
 
-**Note:** If `python` resolves to an msys64 or MinGW installation without pip, use the Windows Python launcher `py` instead.
+**Windows Users**: Use the PowerShell build script instead of `make`:
+
+```powershell
+# Show all available commands
+.\build.ps1 help
+
+# Install dependencies
+.\build.ps1 install
+
+# Run tests with coverage
+.\build.ps1 test
+
+# Run the app
+.\build.ps1 run
+
+# Build Docker image
+.\build.ps1 docker-build
+
+# Run Docker container
+.\build.ps1 docker-run
+```
+
+**Manual setup** (if not using build script):
 
 ```powershell
 # create a virtual env (recommended)
