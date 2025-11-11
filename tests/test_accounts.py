@@ -54,6 +54,28 @@ class AccountsTestCase(unittest.TestCase):
         # CORS should add Access-Control-Allow-Origin
         self.assertIn('Access-Control-Allow-Origin', rv.headers)
 
+    def test_create_account_missing_name(self):
+        # Test validation: name is required
+        rv = self.app.post('/accounts', json={'email': 'noname@example.com'})
+        self.assertEqual(rv.status_code, 400)
+        data = rv.get_json()
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'name is required')
+
+    def test_update_nonexistent_account(self):
+        # Test updating account that doesn't exist
+        rv = self.app.put('/accounts/999', json={'name': 'Ghost'})
+        self.assertEqual(rv.status_code, 404)
+        data = rv.get_json()
+        self.assertIn('error', data)
+
+    def test_delete_nonexistent_account(self):
+        # Test deleting account that doesn't exist
+        rv = self.app.delete('/accounts/999')
+        self.assertEqual(rv.status_code, 404)
+        data = rv.get_json()
+        self.assertIn('error', data)
+
 
 if __name__ == '__main__':
     unittest.main()
