@@ -85,11 +85,9 @@ Write-Host 'Press any key to continue...' -ForegroundColor Green
     # Start PowerShell in new maximized window
     $process = Start-Process powershell.exe -ArgumentList "-NoExit", "-ExecutionPolicy", "Bypass", "-File", $tempScript -PassThru -WindowStyle Maximized
     
-    Write-Host "  Waiting for terminal to open..." -ForegroundColor Yellow
-    Start-Sleep -Seconds 3
-    
-    Write-Host "  Press ENTER when ready to capture $filename" -ForegroundColor Green
-    Read-Host
+    Write-Host "  Waiting for terminal to open and command to execute..." -ForegroundColor Yellow
+    Write-Host "  Auto-capturing in 10 seconds..." -ForegroundColor Cyan
+    Start-Sleep -Seconds 10
     
     Capture-Screenshot -filename $filename
     
